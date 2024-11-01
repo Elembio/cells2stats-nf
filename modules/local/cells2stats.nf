@@ -14,8 +14,8 @@ process CELLS2STATS {
     output:
 
     path "./c2s_results",    emit: results
-    path "versions.yml",   emit: versions
-    path "run.log",        emit: run_log
+    path "versions.yml",     emit: versions
+    path "run.log",          emit: run_log
 
     script:
     def batch_option = params.batch ? "--batch ${params.batch}" : ""
