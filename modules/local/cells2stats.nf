@@ -13,7 +13,7 @@ process CELLS2STATS {
 
     output:
 
-    path params.outdir,    emit: results
+    path "./c2s_results",    emit: results
     path "versions.yml",   emit: versions
     path "run.log",        emit: run_log
 
