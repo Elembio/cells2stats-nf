@@ -15,6 +15,7 @@ process CELLS2STATS {
 
     path params.outdir,    emit: results
     path "versions.yml",   emit: versions
+    path "run.log",        emit: run_log
 
     script:
     def batch_option = params.batch ? "--batch ${params.batch}" : ""
@@ -47,7 +48,7 @@ process CELLS2STATS {
         ${tile_option} \\
         ${well_option} \\
         -j ${task.cpus} \\
-        --output ./results \\
+        --output ./c2s_results \\
         ${input_dir}
     "
 
@@ -63,7 +64,7 @@ process CELLS2STATS {
         ${tile_option} \\
         ${well_option} \\
         -j ${task.cpus} \\
-        --output ./results \\
+        --output ./c2s_results \\
         ${input_dir}
 
     cat <<-END_VERSIONS > versions.yml
