@@ -13,7 +13,7 @@ process CELLS2STATS {
 
     output:
 
-    path "./c2s_results",    emit: results
+    path "c2s_results",    emit: results
     path "versions.yml",     emit: versions
     path "run.log",          emit: run_log
 
@@ -48,7 +48,7 @@ process CELLS2STATS {
         ${tile_option} \\
         ${well_option} \\
         -j ${task.cpus} \\
-        --output ./c2s_results \\
+        --output c2s_results \\
         ${input_dir}
     "
 
@@ -64,7 +64,7 @@ process CELLS2STATS {
         ${tile_option} \\
         ${well_option} \\
         -j ${task.cpus} \\
-        --output ./c2s_results \\
+        --output c2s_results \\
         ${input_dir}
 
     cat <<-END_VERSIONS > versions.yml
