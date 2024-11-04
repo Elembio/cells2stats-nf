@@ -34,7 +34,7 @@
     },
     "container_tag": {
       "type": "string",
-      "default": "0.1.1"
+      "default": "0.2.2"
     },
     "input_dir": {
       "type": "string"
@@ -102,7 +102,7 @@
     },
     "max_memory": {
       "type": "string",
-      "default": "192.GB"
+      "default": "144.GB"
     },
     "max_cpus": {
       "type": "integer",
@@ -111,6 +111,12 @@
     "max_time": {
       "type": "string",
       "default": "5.h"
+    },
+    "visualization": {
+      "type": "boolean"
+    },
+    "visualization_only": {
+      "type": "boolean"
     }
   },
   "required": ["id"]
