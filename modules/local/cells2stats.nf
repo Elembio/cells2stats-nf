@@ -28,6 +28,9 @@ process CELLS2STATS {
     def skip_cellprofiler_option = params.skip_cellprofiler ? "--skip-cellprofiler" : ""
     def tile_option = params.tile ? "--tile ${params.tile}" : ""
     def well_option = params.well ? "--well ${params.well}" : ""
+    def visualization_option = params.visualization ? "--visualization" : ""
+    def visualization_only_option = params.visualization_only ? "--visualization-only" : ""
+
 
     """
     logfile=run.log
@@ -47,6 +50,8 @@ process CELLS2STATS {
         ${skip_cellprofiler_option} \\
         ${tile_option} \\
         ${well_option} \\
+        ${visualization_option} \\
+        ${visualization_only_option} \\
         -j ${task.cpus} \\
         --output c2s_results \\
         ${input_dir}
@@ -63,6 +68,8 @@ process CELLS2STATS {
         ${skip_cellprofiler_option} \\
         ${tile_option} \\
         ${well_option} \\
+        ${visualization_option} \\
+        ${visualization_only_option} \\
         -j ${task.cpus} \\
         --output c2s_results \\
         ${input_dir}
