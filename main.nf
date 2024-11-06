@@ -6,13 +6,13 @@ log.info """\
  =============================================
  C E L L S 2 S T A T S - N F   P I P E L I N E
  =============================================
- input_dir: ${params.input_dir}
+ run_dir: ${params.run_dir}
  container_url: ${params.container_url}
  container_tag: ${params.container_tag}
  """
 
 // Check mandatory parameters
-if (!params.input_dir) {
+if (!params.run_dir) {
     error "An input AVITI24 cytoprofiling result directory is required."
 }
 
@@ -26,7 +26,7 @@ include { CELLS2STATS } from './modules/local/cells2stats'
 workflow {
     CELLS2STATS (
         params.id,
-        params.input_dir,
+        params.run_dir,
         run_panel,
         run_manifest,
      )

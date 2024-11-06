@@ -7,7 +7,7 @@ process CELLS2STATS {
 
     input:
     val id
-    path input_dir
+    path run_dir
     path run_panel
     path run_manifest
 
@@ -54,7 +54,7 @@ process CELLS2STATS {
         ${visualization_only_option} \\
         -j ${task.cpus} \\
         --output c2s_results \\
-        ${input_dir}
+        ${run_dir}
     "
 
     cells2stats \\
@@ -72,7 +72,7 @@ process CELLS2STATS {
         ${visualization_only_option} \\
         -j ${task.cpus} \\
         --output c2s_results \\
-        ${input_dir}
+        ${run_dir}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
