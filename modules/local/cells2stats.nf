@@ -13,9 +13,24 @@ process CELLS2STATS {
 
     output:
 
-    path "c2s_results",    emit: results
-    path "versions.yml",     emit: versions
-    path "run.log",          emit: run_log
+    // Cells2Stats outpus
+    path "c2s_results/AverageNormWellStats.csv"  , optional: true, emit: average_norm_well_stats_csv
+    path "c2s_results/RawCellStats.csv"          , optional: true, emit: raw_cell_stats_csv
+    path "c2s_results/RawCellStats.parquet"      , optional: true, emit: raw_cell_stats_parquet
+    path "c2s_results/RunStats.json"             , optional: true, emit: run_stats_json
+    path "c2s_results/RunParameters.json"        , optional: true, emit: run_parameters_json
+    path "c2s_results/Panel.json"                , optional: true, emit: panel_json
+    path "c2s_results/RunManifest.json"          , optional: true, emit: run_manifest_json
+    path "c2s_results/RunManifest.csv"           , optional: true, emit: run_manifest_csv
+    path "c2s_results/Versions.json"             , optional: true, emit: versions_json
+    path "c2s_results/Wells"                     , optional: true, emit: wells_parquet
+    path "c2s_results/CellSegmentation"          , optional: true, emit: cell_segmentation
+    path "c2s_results/Logs"                      , optional: true, emit: program_logs
+    // If visualization was requested
+    path "c2s_results/visualization"             , optional: true, emit: visualization_data
+    // Pipeline logs
+    path "versions.yml"                          , emit: versions
+    path "run.log"                               , emit: run_log
 
     script:
     def batch_option = params.batch ? "--batch ${params.batch}" : ""
