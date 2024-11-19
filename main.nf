@@ -19,6 +19,7 @@ if (!params.run_dir) {
 // Check if optional inputs were provided
 def run_panel = params.panel ? params.panel : []
 def run_manifest = params.run_manifest ? params.run_manifest : []
+def segmentation = params.segmentation ? params.segmentation : []
 
 // Import local modules
 include { CELLS2STATS } from './modules/local/cells2stats'
@@ -29,6 +30,7 @@ workflow {
         params.run_dir,
         run_panel,
         run_manifest,
+        segmentation,
      )
 }
 
