@@ -30,8 +30,8 @@ process CELLS2STATS {
     // If visualization was requested
     path "visualization/*"             , optional: true, emit: visualization_data
     // Pipeline logs
-    path "versions.yml"                          , emit: versions
-    path "run.log"                               , emit: run_log
+    path "versions.yml"                                , emit: versions
+    path "run.log"                                     , emit: run_log
 
     script:
     def batch_option = params.batch ? "--batch ${params.batch}" : ""
