@@ -117,6 +117,9 @@
     },
     "visualization_only": {
       "type": "boolean"
+    },
+    "segmentation": {
+      "type": "string"
     }
   },
   "required": ["id"]

@@ -10,27 +10,28 @@ process CELLS2STATS {
     path run_dir
     path run_panel
     path run_manifest
+    path segmentation
 
     output:
 
     // Cells2Stats outpus
-    path "c2s_results/AverageNormWellStats.csv"  , optional: true, emit: average_norm_well_stats_csv
-    path "c2s_results/RawCellStats.csv"          , optional: true, emit: raw_cell_stats_csv
-    path "c2s_results/RawCellStats.parquet"      , optional: true, emit: raw_cell_stats_parquet
-    path "c2s_results/RunStats.json"             , optional: true, emit: run_stats_json
-    path "c2s_results/RunParameters.json"        , optional: true, emit: run_parameters_json
-    path "c2s_results/Panel.json"                , optional: true, emit: panel_json
-    path "c2s_results/RunManifest.json"          , optional: true, emit: run_manifest_json
-    path "c2s_results/RunManifest.csv"           , optional: true, emit: run_manifest_csv
-    path "c2s_results/Versions.json"             , optional: true, emit: versions_json
-    path "c2s_results/Wells"                     , optional: true, emit: wells_parquet
-    path "c2s_results/CellSegmentation"          , optional: true, emit: cell_segmentation
-    path "c2s_results/Logs"                      , optional: true, emit: program_logs
+    path "AverageNormWellStats.csv"    , optional: true, emit: average_norm_well_stats_csv
+    path "RawCellStats.csv"            , optional: true, emit: raw_cell_stats_csv
+    path "RawCellStats.parquet"        , optional: true, emit: raw_cell_stats_parquet
+    path "RunStats.json"               , optional: true, emit: run_stats_json
+    path "RunParameters.json"          , optional: true, emit: run_parameters_json
+    path "Panel.json"                  , optional: true, emit: panel_json
+    path "RunManifest.json"            , optional: true, emit: run_manifest_json
+    path "RunManifest.csv"             , optional: true, emit: run_manifest_csv
+    path "Versions.json"               , optional: true, emit: versions_json
+    path "Wells/*"                     , optional: true, emit: wells_parquet
+    path "CellSegmentation/*"          , optional: true, emit: cell_segmentation
+    path "Logs/*"                      , optional: true, emit: program_logs
     // If visualization was requested
-    path "c2s_results/visualization"             , optional: true, emit: visualization_data
+    path "visualization/*"             , optional: true, emit: visualization_data
     // Pipeline logs
-    path "versions.yml"                          , emit: versions
-    path "run.log"                               , emit: run_log
+    path "versions.yml"                                , emit: versions
+    path "run.log"                                     , emit: run_log
 
     script:
     def batch_option = params.batch ? "--batch ${params.batch}" : ""
@@ -40,6 +41,7 @@ process CELLS2STATS {
     def no_error_on_invalid_option = params.no_error_on_invalid ? "--no-error-on-invalid" : ""
     def panel_option = run_panel ? "--panel ${run_panel}" : ""
     def run_manifest_option = run_manifest ? "--run-manifest ${run_manifest}" : ""
+    def segmentation_option = segmentation ? "--segmentation ${segmentation}" : ""
     def skip_cellprofiler_option = params.skip_cellprofiler ? "--skip-cellprofiler" : ""
     def tile_option = params.tile ? "--tile ${params.tile}" : ""
     def well_option = params.well ? "--well ${params.well}" : ""
@@ -62,13 +64,14 @@ process CELLS2STATS {
         ${no_error_on_invalid_option} \\
         ${panel_option} \\
         ${run_manifest_option} \\
+        ${segmentation_option} \\
         ${skip_cellprofiler_option} \\
         ${tile_option} \\
         ${well_option} \\
         ${visualization_option} \\
         ${visualization_only_option} \\
         -j ${task.cpus} \\
-        --output c2s_results \\
+        --output . \\
         ${run_dir}
     "
 
@@ -80,13 +83,14 @@ process CELLS2STATS {
         ${no_error_on_invalid_option} \\
         ${panel_option} \\
         ${run_manifest_option} \\
+        ${segmentation_option} \\
         ${skip_cellprofiler_option} \\
         ${tile_option} \\
         ${well_option} \\
         ${visualization_option} \\
         ${visualization_only_option} \\
         -j ${task.cpus} \\
-        --output c2s_results \\
+        --output . \\
         ${run_dir}
 
     cat <<-END_VERSIONS > versions.yml
