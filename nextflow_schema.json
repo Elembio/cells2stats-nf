@@ -34,7 +34,7 @@
     },
     "container_tag": {
       "type": "string",
-      "default": "0.2.2"
+      "default": "latest"
     },
     "run_dir": {
       "type": "string"
