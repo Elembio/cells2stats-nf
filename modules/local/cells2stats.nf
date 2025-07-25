@@ -1,8 +1,7 @@
 process CELLS2STATS {
     tag "$id"
     label 'process_high'
-    scratch true
-
+    
     container "${params.container_url}:${params.container_tag}"
 
     input:
