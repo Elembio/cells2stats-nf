@@ -3,13 +3,13 @@
 nextflow.enable.dsl = 2
 
 log.info """\
- =============================================
- C E L L S 2 S T A T S - N F   P I P E L I N E
- =============================================
- run_dir: ${params.run_dir}
- container_url: ${params.container_url}
- container_tag: ${params.container_tag}
- """
+=============================================
+C E L L S 2 S T A T S - N F   P I P E L I N E
+=============================================
+run_dir: ${params.run_dir}
+container_url: ${params.container_url}
+container_tag: ${params.container_tag}
+"""
 
 // Check mandatory parameters
 if (!params.run_dir) {
@@ -23,6 +23,7 @@ def segmentation = params.segmentation ? params.segmentation : []
 
 // Import local modules
 include { CELLS2STATS } from './modules/local/cells2stats'
+include { MULTIQC } from './modules/nf-core/multiqc'
 
 workflow {
     CELLS2STATS (
@@ -31,6 +32,18 @@ workflow {
         run_panel,
         run_manifest,
         segmentation,
-     )
+    )
+
+    // MultiQC
+    ch_multiqc_config = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
+    ch_multiqc_logo = params.multiqc_logo ? Channel.fromPath(params.multiqc_logo, checkIfExists: true) : Channel.fromPath("$projectDir/assets/Element_Biosciences_Logo_Black_RGB.png", checkIfExists: true)
+
+    MULTIQC (
+        CELLS2STATS.out.run_stats_json,
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList()
+    )
 }
 

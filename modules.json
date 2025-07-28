@@ -1,0 +1,17 @@
+{
+  "name": "elembio/cells2stats",
+  "homePage": "https://gitlab.com/elembio/analysis/nextflow-workflows/cells2stats-nf",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "multiqc": {
+            "branch": "master",
+            "git_sha": "c9a31c472ef2d86802eb44f27322955849859361",
+            "installed_by": ["modules"]
+          }
+        }
+      }
+    }
+  }
+}
