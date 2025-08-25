@@ -29,6 +29,7 @@ process CELLS2STATS {
     // If visualization was requested
     path "visualization/*"             , optional: true, emit: visualization_data
     // Pipeline logs
+    path "multiqc_report.html"         , optional: true, emit: multiqc_report
     path "versions.yml"                                , emit: versions
     path "run.log"                                     , emit: run_log
 
