@@ -9,6 +9,16 @@ log.info """\
  run_dir: ${params.run_dir}
  container_url: ${params.container_url}
  container_tag: ${params.container_tag}
+ error_on_missing: ${params.error_on_missing}
+ skip_html_report: ${params.skip_html_report}
+ skip_cellprofiler: ${params.skip_cellprofiler}
+ visualization: ${params.visualization}
+ visualization_only: ${params.visualization_only}
+ segmentation: ${params.segmentation}
+ panel: ${params.panel}
+ max_unassigned: ${params.max_unassigned}
+ no_error_on_invalid: ${params.no_error_on_invalid}
+ batch: ${params.batch}
  """
 
 // Check mandatory parameters
