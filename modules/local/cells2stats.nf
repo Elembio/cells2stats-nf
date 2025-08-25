@@ -46,6 +46,8 @@ process CELLS2STATS {
     def well_option = params.well ? "--well ${params.well}" : ""
     def visualization_option = params.visualization ? "--visualization" : ""
     def visualization_only_option = params.visualization_only ? "--visualization-only" : ""
+    def skip_html_report_option = params.skip_html_report ? "--skip-html-report" : ""
+
 
 
     """
@@ -69,6 +71,7 @@ process CELLS2STATS {
         ${well_option} \\
         ${visualization_option} \\
         ${visualization_only_option} \\
+        ${skip_html_report_option} \\
         -j ${task.cpus} \\
         --output . \\
         ${run_dir}
@@ -88,6 +91,7 @@ process CELLS2STATS {
         ${well_option} \\
         ${visualization_option} \\
         ${visualization_only_option} \\
+        ${skip_html_report_option} \\
         -j ${task.cpus} \\
         --output . \\
         ${run_dir}

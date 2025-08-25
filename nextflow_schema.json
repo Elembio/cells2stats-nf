@@ -67,6 +67,9 @@
     "skip_cellprofiler": {
       "type": "boolean"
     },
+    "skip_html_report": {
+      "type": "boolean"
+    },
     "tile": {
       "type": "string"
     },
