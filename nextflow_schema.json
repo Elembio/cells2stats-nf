@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/elembio/cells2stats/master/nextflow_schema.json",
+  "$id": "https://raw.githubusercontent.com/elembio/cells2stats-nf/main/nextflow_schema.json",
   "title": "elembio/cells2stats pipeline parameters",
-  "description": "Cell stats generation from Element AVITI24 System",
+  "description": "Cell stats generation from Element AVITI System",
   "type": "object",
   "$defs": {
     "input_output_options": {
@@ -10,14 +10,231 @@
       "type": "object",
       "fa_icon": "fas fa-terminal",
       "description": "Define where the pipeline should find input data and save output data.",
-      "required": ["outdir"],
       "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "Path to AVITI run directory (local or S3)"
+        },
         "outdir": {
           "type": "string",
           "format": "directory-path",
-          "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+          "description": "The output directory where the results will be saved.",
           "fa_icon": "fas fa-folder-open",
           "default": "./results"
+        },
+        "id": {
+          "type": "string",
+          "hidden": true,
+          "description": "Optional run identifier. If not set: when run_dir matches .../runs/<instrument>/<run_id>/analysis/<analysis_id>/..., that run_id is used; otherwise the last path segment of run_dir."
+        }
+      }
+    },
+    "shared_filters": {
+      "title": "Shared Filters",
+      "type": "object",
+      "description": "Filters applied to cells2stats processing.",
+      "default": "",
+      "properties": {
+        "tile": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tile regex pattern(s) -- drives c2s --tile"
+        },
+        "filter_batch": {
+          "type": "string",
+          "description": "Restrict to specific batch(es), comma-delimited (e.g. B01,B02)"
+        },
+        "segmentation_dir": {
+          "type": "string",
+          "description": "Custom cell segmentation directory. Passed to cells2stats via --segmentation."
+        }
+      }
+    },
+    "assay_types": {
+      "title": "Assay Type Categories",
+      "type": "object",
+      "description": "Assay type classification lists for Panel.json batch logging.",
+      "default": "",
+      "properties": {
+        "three_prime_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["ThreePrimeUntargeted", "Transcript"],
+          "description": "Assay types classified as three-prime untargeted"
+        },
+        "specialized_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["SpecializedTargeted"],
+          "description": "Assay types classified as specialized targeted"
+        },
+        "targeted_tx_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["TargetedTranscriptomeProfiling"],
+          "description": "Assay types classified as targeted transcriptome profiling"
+        }
+      }
+    },
+    "cells2stats": {
+      "title": "Cells2Stats",
+      "type": "object",
+      "description": "Parameters for the cells2stats (c2s) process.",
+      "default": "",
+      "properties": {
+        "c2s_panel_json": {
+          "type": "string",
+          "description": "Path to custom Panel.json file"
+        },
+        "c2s_run_manifest": {
+          "type": "string",
+          "description": "Path to custom run manifest (.csv or .json)"
+        },
+        "c2s_tca_manifest_csv": {
+          "type": "string",
+          "description": "Path to Target Cell Assignment manifest CSV"
+        },
+        "c2s_well": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Well filter(s) as a list (e.g. [\"A1\", \"B2\"])"
+        },
+        "c2s_error_on_missing": {
+          "type": "boolean",
+          "description": "Terminate on missing files"
+        },
+        "c2s_no_error_on_invalid": {
+          "type": "boolean",
+          "description": "Skip invalid files instead of erroring"
+        },
+        "c2s_skip_cellprofiler": {
+          "type": "boolean",
+          "description": "Skip CellProfiler execution"
+        },
+        "c2s_skip_html_report": {
+          "type": "boolean",
+          "description": "Skip MultiQC HTML report generation"
+        },
+        "c2s_max_unassigned": {
+          "type": ["integer", "null"],
+          "default": null,
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Maximum unassigned sequences to report (1-10000). Optional; leave unset to omit --max-unassigned."
+        },
+        "c2s_log_level": {
+          "type": "string",
+          "default": "info",
+          "description": "Log level: debug, info, warning, error"
+        },
+        "c2s_tar_program_logs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Tar/gz the cells2stats Logs directory; when false, the directory is published as-is"
+        },
+        "c2s_target_mismatch_threshold": {
+          "type": ["integer", "null"],
+          "default": null,
+          "minimum": 0,
+          "maximum": 3,
+          "description": "OPS / SpecializedTargeted: --target-mismatch-threshold N (0-3); overrides per-batch TCA manifest setting"
+        },
+        "c2s_specialized_targeted_min_query_length": {
+          "type": ["integer", "null"],
+          "default": null,
+          "minimum": 12,
+          "description": "OPS / SpecializedTargeted: --specialized-targeted-min-query-length LENGTH (>=12)"
+        },
+        "c2s_generate_specialized_targeted_bams": {
+          "type": "boolean",
+          "description": "OPS / SpecializedTargeted: --generate-specialized-targeted-bams"
+        },
+        "c2s_args": {
+          "type": "string",
+          "hidden": true,
+          "deprecated": true,
+          "description": "DEPRECATED: catch-all string appended to cells2stats CLI. Prefer overriding `withName: CELLS2STATS { ext.args = { ... } }` in a `-c custom.config` overlay; see conf/modules.config for the canonical closure. Will be removed in a future release."
+        }
+      }
+    },
+    "docker_containers": {
+      "title": "Docker Containers",
+      "type": "object",
+      "description": "Docker container image URLs and version tags.",
+      "default": "",
+      "properties": {
+        "c2s_container_url": {
+          "type": "string",
+          "default": "904220683607.dkr.ecr.us-west-2.amazonaws.com/cells2stats-release",
+          "description": "cells2stats container repository"
+        },
+        "c2s_container_tag": {
+          "type": "string",
+          "default": "1.4.0-beta",
+          "description": "cells2stats container version tag"
+        }
+      }
+    },
+    "infrastructure": {
+      "title": "Infrastructure",
+      "type": "object",
+      "description": "Resource limits and pipeline infrastructure settings.",
+      "default": "",
+      "properties": {
+        "max_cpus": {
+          "type": "integer",
+          "default": 48,
+          "hidden": true
+        },
+        "max_memory": {
+          "type": "string",
+          "default": "192.GB",
+          "hidden": true
+        },
+        "max_time": {
+          "type": "string",
+          "default": "8.h",
+          "hidden": true
+        },
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "hidden": true
+        },
+        "tracedir": {
+          "type": "string",
+          "default": "./results/pipeline_info",
+          "hidden": true
+        },
+        "enable_conda": {
+          "type": "boolean",
+          "hidden": true
+        },
+        "custom_config_version": {
+          "type": "string",
+          "default": "main",
+          "hidden": true
+        },
+        "custom_config_base": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/Elembio/configs/main",
+          "hidden": true
+        },
+        "config_profile_name": {
+          "type": "string",
+          "hidden": true
+        },
+        "config_profile_description": {
+          "type": "string",
+          "hidden": true
+        },
+        "config_profile_contact": {
+          "type": "string",
+          "hidden": true
+        },
+        "config_profile_url": {
+          "type": "string",
+          "hidden": true
         }
       }
     }
@@ -25,105 +242,21 @@
   "allOf": [
     {
       "$ref": "#/$defs/input_output_options"
+    },
+    {
+      "$ref": "#/$defs/shared_filters"
+    },
+    {
+      "$ref": "#/$defs/assay_types"
+    },
+    {
+      "$ref": "#/$defs/cells2stats"
+    },
+    {
+      "$ref": "#/$defs/docker_containers"
+    },
+    {
+      "$ref": "#/$defs/infrastructure"
     }
-  ],
-  "properties": {
-    "container_url": {
-      "type": "string",
-      "default": "147637153406.dkr.ecr.us-west-2.amazonaws.com/modules/cells2stats"
-    },
-    "container_tag": {
-      "type": "string",
-      "default": "latest"
-    },
-    "run_dir": {
-      "type": "string"
-    },
-    "id": {
-      "type": "string"
-    },
-    "batch": {
-      "type": "string"
-    },
-    "error_on_missing": {
-      "type": "boolean"
-    },
-    "log_level": {
-      "type": "string",
-      "default": "info"
-    },
-    "max_unassigned": {
-      "type": "string"
-    },
-    "no_error_on_invalid": {
-      "type": "boolean"
-    },
-    "panel": {
-      "type": "string"
-    },
-    "run_manifest": {
-      "type": "string"
-    },
-    "skip_cellprofiler": {
-      "type": "boolean"
-    },
-    "skip_html_report": {
-      "type": "boolean"
-    },
-    "tile": {
-      "type": "string"
-    },
-    "well": {
-      "type": "string"
-    },
-    "tracedir": {
-      "type": "string",
-      "default": "./results/pipeline_info"
-    },
-    "enable_conda": {
-      "type": "boolean"
-    },
-    "custom_config_version": {
-      "type": "string",
-      "default": "master"
-    },
-    "custom_config_base": {
-      "type": "string",
-      "default": "https://raw.githubusercontent.com/nf-core/configs/master"
-    },
-    "config_profile_description": {
-      "type": "string"
-    },
-    "config_profile_contact": {
-      "type": "string"
-    },
-    "config_profile_url": {
-      "type": "string"
-    },
-    "config_profile_name": {
-      "type": "string"
-    },
-    "max_memory": {
-      "type": "string",
-      "default": "144.GB"
-    },
-    "max_cpus": {
-      "type": "integer",
-      "default": 48
-    },
-    "max_time": {
-      "type": "string",
-      "default": "5.h"
-    },
-    "visualization": {
-      "type": "boolean"
-    },
-    "visualization_only": {
-      "type": "boolean"
-    },
-    "segmentation": {
-      "type": "string"
-    }
-  },
-  "required": ["id"]
+  ]
 }

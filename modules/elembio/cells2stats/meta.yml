@@ -1,0 +1,175 @@
+name: cells2stats
+description: Generate cell-level statistics from Element AVITI spatial transcriptomics data
+keywords:
+  - spatial transcriptomics
+  - cell statistics
+  - aviti
+  - element biosciences
+tools:
+  - cells2stats:
+      description: Cell statistics generation tool for Element AVITI System
+      homepage: https://docs.elembio.io/
+      licence: ["Proprietary"]
+
+input:
+  - meta:
+      type: map
+      description: "Groovy map containing run metadata (e.g., `[id: run_id]`)"
+  - run_dir:
+      type: val
+      description: Path to AVITI analysis run directory
+  - run_panel:
+      type: file
+      description: Optional Panel.json file (empty list if not provided)
+      pattern: "Panel.json"
+  - run_manifest:
+      type: file
+      description: Optional run manifest file (empty list if not provided)
+      pattern: "*.{csv,json}"
+  - segmentation:
+      type: file
+      description: Optional custom cell segmentation directory (empty list if not provided)
+  - tca_manifest:
+      type: file
+      description: |
+        Optional TargetCellAssignmentManifest CSV (empty list if not provided).
+        Passed to cells2stats via `--tca-manifest`. Previously read from
+        `params.c2s_tca_manifest_csv` directly; now a proper channel input
+        so the file is staged into the work dir like other path inputs.
+      pattern: "*.csv"
+
+output:
+  - average_norm_well_stats_csv:
+      type: file
+      description: Average normalized well statistics
+      pattern: "AverageNormWellStats.csv"
+  - raw_cell_stats_csv:
+      type: file
+      description: Raw cell statistics (CSV)
+      pattern: "RawCellStats.csv"
+  - raw_cell_stats_parquet:
+      type: file
+      description: Raw cell statistics (Parquet)
+      pattern: "RawCellStats.parquet"
+  - run_stats_json:
+      type: file
+      description: Run statistics
+      pattern: "RunStats.json"
+  - run_parameters_json:
+      type: file
+      description: Run parameters
+      pattern: "RunParameters.json"
+  - panel_json:
+      type: file
+      description: Panel configuration
+      pattern: "Panel.json"
+  - run_manifest_json:
+      type: file
+      description: Run manifest (JSON)
+      pattern: "RunManifest.json"
+  - run_manifest_csv:
+      type: file
+      description: Run manifest (CSV)
+      pattern: "RunManifest.csv"
+  - versions_json:
+      type: file
+      description: Cells2Stats version information
+      pattern: "Versions.json"
+  - wells_dir:
+      type: directory
+      description: Per-well output directory
+      pattern: "Wells"
+  - rawreads_files:
+      type: file
+      description: |
+        Per-tile rawreads parquets under Wells/<well>/<batch>/. Glob-emit so
+        downstream consumers can group by (well,batch) without walking Wells/
+        on the submitter (brittle on AWS Batch / Fusion / S3 workdirs).
+      pattern: "Wells/**/*_rawreads.parquet"
+  - cell_segmentation:
+      type: directory
+      description: Cell segmentation output directory
+      pattern: "CellSegmentation"
+  - analysis_region:
+      type: directory
+      description: Per-tile AnalysisRegion mask TIFFs (overlap runs only)
+      pattern: "AnalysisRegion"
+  - program_logs_tar:
+      type: file
+      description: Compressed program logs
+      pattern: "Logs.tar.gz"
+  - program_logs:
+      type: directory
+      description: Program logs directory
+      pattern: "Logs"
+  - target_cell_assignment_manifest_csv:
+      type: file
+      description: Target cell assignment manifest (CSV)
+      pattern: "TargetCellAssignmentManifest.csv"
+  - target_cell_assignment_manifest_json:
+      type: file
+      description: Target cell assignment manifest (JSON)
+      pattern: "TargetCellAssignmentManifest.json"
+  - target_counts_json:
+      type: file
+      description: Target counts
+      pattern: "TargetCounts.json"
+  - cyto_viz:
+      type: file
+      description: Cyto visualization file
+      pattern: "cyto.viz"
+  - viz_zip:
+      type: file
+      description: Visualization archive
+      pattern: "visualization.zip"
+  - viz_index_json_gz:
+      type: file
+      description: Visualization index
+      pattern: "visualization-index.json.gz"
+  - spatial_data_dir:
+      type: directory
+      description: |
+        c2s-internal SpatialData directory. Emitted as a single path so
+        publishDir can copy the entire tree (zip + zarr + parquet + viz +
+        index json) as a unit; consumers that need the inner files
+        individually can still use `spatial_data_zip` / `spatial_data_zarr`.
+      pattern: "SpatialData"
+  - spatial_data_zip:
+      type: file
+      description: Spatial data archive(s)
+      pattern: "SpatialData/*.zip"
+  - spatial_data_zarr:
+      type: file
+      description: Spatial data zarr store(s)
+      pattern: "SpatialData/*.zarr"
+  - multiqc_report:
+      type: file
+      description: MultiQC HTML report
+      pattern: "multiqc_report.html"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - run_log:
+      type: file
+      description: Full stdout/stderr log
+      pattern: "run.log"
+  - metrics_dir:
+      type: directory
+      description: |
+        Curated directory mirroring the small-metadata subset of the cells2stats
+        output root. Populated by a strict name-allowlist (RunStats.json,
+        Versions.json, TargetCounts.json, AverageNormWellStats.csv,
+        MosaicLayout.json, Logs.tar.gz, run.log, Panel.json,
+        RunManifest.{json,csv}, RunParameters.json,
+        TargetCellAssignmentManifest.{json,csv}) via relative symlinks.
+        Intended for consumption as a single directory input by downstream
+        tools (e.g. build-spatialdata --c2s-dir). Bulk artefacts
+        (RawCellStats.*, Wells/, CellSegmentation/, AnalysisRegion/, SpatialData/,
+        visualization*) are intentionally excluded.
+      pattern: "metrics"
+
+authors:
+  - "@brlajoie"
+maintainers:
+  - "@brlajoie"

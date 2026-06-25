@@ -1,0 +1,105 @@
+name: cells2stats
+description: Generate cell-level statistics from Element AVITI spatial transcriptomics data
+keywords:
+  - spatial transcriptomics
+  - cell statistics
+  - aviti
+  - element biosciences
+components:
+  - cells2stats
+input:
+  - ch_run_dir:
+      type: channel
+      description: "Channel of tuples: [ [meta], run_dir ]"
+  - ch_panel:
+      type: channel
+      description: Panel file channel (optional)
+  - ch_run_manifest:
+      type: channel
+      description: Run manifest file channel (optional)
+  - ch_segmentation:
+      type: channel
+      description: Segmentation directory channel (optional)
+  - ch_tca_manifest:
+      type: channel
+      description: TargetCellAssignmentManifest CSV channel (optional; consumer constructs from its own params)
+output:
+  - raw_cell_stats_parquet:
+      type: channel
+      description: "Raw cell statistics (Parquet): [ [meta], parquet ]"
+  - raw_cell_stats_csv:
+      type: channel
+      description: "Raw cell statistics (CSV): [ [meta], csv ]"
+  - run_stats_json:
+      type: channel
+      description: Run statistics JSON
+  - run_parameters_json:
+      type: channel
+      description: Run parameters JSON
+  - panel_json:
+      type: channel
+      description: Panel configuration JSON
+  - run_manifest_json:
+      type: channel
+      description: Run manifest JSON
+  - run_manifest_csv:
+      type: channel
+      description: Run manifest CSV
+  - versions_json:
+      type: channel
+      description: Cells2Stats version information
+  - wells_dir:
+      type: channel
+      description: Per-well output directory
+  - rawreads_files:
+      type: channel
+      description: "Per-tile rawreads parquets [ [meta], [files] ]; glob-emit grouped by (well,batch) downstream"
+  - cell_segmentation:
+      type: channel
+      description: Cell segmentation output directory
+  - analysis_region:
+      type: channel
+      description: Per-tile AnalysisRegion mask TIFFs (overlap runs only)
+  - program_logs:
+      type: channel
+      description: Program logs directory
+  - program_logs_tar:
+      type: channel
+      description: Compressed program logs
+  - spatial_data_dir:
+      type: channel
+      description: c2s-internal SpatialData directory (whole tree as a single path)
+  - spatial_data_zip:
+      type: channel
+      description: Spatial data archives
+  - spatial_data_zarr:
+      type: channel
+      description: Spatial data zarr stores
+  - cyto_viz:
+      type: channel
+      description: Cyto visualization file
+  - viz_zip:
+      type: channel
+      description: Visualization archive
+  - viz_index_json_gz:
+      type: channel
+      description: Visualization index
+  - target_cell_assignment_manifest_json:
+      type: channel
+      description: Target cell assignment manifest (JSON)
+  - target_cell_assignment_manifest_csv:
+      type: channel
+      description: Target cell assignment manifest (CSV)
+  - multiqc_report:
+      type: channel
+      description: MultiQC HTML report
+  - metrics_dir:
+      type: channel
+      description: Curated small-metadata directory (see module meta) for downstream --c2s-dir consumption
+  - versions:
+      type: channel
+      description: Software versions
+authors:
+  - "@brlajoie"
+maintainers:
+  - "@brlajoie"
